@@ -7,15 +7,17 @@ The I2C digital sensor softcore operates on 16 bit instructions selected specifi
 | No operation			  | noop     | None                         | {0x0000}                |
 | Reset                	 	  | reset    | None                         | {0x0001}                |
 | Halt                 	 	  | halt     | None                         | {0x0002}                |
-| Write to internal register      | regwr    | register[1:0], value[11:0]   | {0x1, reg, val}         |
+| Return                          | rtrn     | None                         | {0x0003}                |
+| Write to internal register      | regwr    | register[1:0], value[7:0]    | {0x1, 0b00, reg, val}   |
 | Write to output                 | outwr    | output[3:0], value[7:0]      | {0x2, out, val}         |
-| Jump if equal                   | jieq     | register[1:0], value[11:0]   | {0x3, reg, val}         |
-| Jump if not equal               | jine     | register[1:0], value[11:0]   | {0x4, reg, val}         |
-| Conditional jump and decriment  | jdec     | register[1:0], pointer[11:0] | {0x5, reg, ptr}         |
-| I2C start            		  | start    | i2c address[10:0]            | {0x6, 0b0, addr}        |
-| I2C repeated start              | rstrt    | None                         | {0x6, 0b1, addr}        |
-| I2C write constant   		  | wrc      | value[7:0], ACK              | {0x7, 0b000, val, ack}  |
-| I2C write register   		  | wrr      | register[1:0], ACK           | {0x720, 0b0, reg, ack}  |
-| I2C read to output 		  | outrd    | output[3:0], ACK             | {0x80, 0b000, out, ack} |
-| I2C read to register            | regrd    | register[1:0], ACK           | {0x800, 0b0, reg, ack}  |
-| I2C stop                        | stop     | None                         | {0x0003}                |
+| Copy register to output         | outrg    | output[3:0], register[1:0]   | {0x30, 0b00, out, reg}  | 
+| Jump if equal                   | jieq     | register[1:0], value[7:0]    | {0x4, 0b00, reg, val}   |
+| Jump if not equal               | jine     | register[1:0], value[7:0]    | {0x5, 0b00, reg, val}   |
+| Conditional jump and decriment  | jdec     | register[1:0], pointer[7:0]  | {0x6, 0b00, reg, ptr}   |
+| I2C start            		  | start    | i2c address[10:0]            | {0x7, 0b0, addr}        |
+| I2C repeated start              | rstrt    | None                         | {0x7800}                |
+| I2C write constant   		  | wrc      | value[7:0], ACK              | {0x8, 0b000, val, ack}  |
+| I2C write register   		  | wrr      | register[1:0], ACK           | {0x820, 0b0, reg, ack}  |
+| I2C read to output 		  | outrd    | output[3:0], ACK             | {0x90, 0b000, out, ack} |
+| I2C read to register            | regrd    | register[1:0], ACK           | {0x980, 0b0, reg, ack}  |
+| I2C stop                        | stop     | None                         | {0x0004}                |
