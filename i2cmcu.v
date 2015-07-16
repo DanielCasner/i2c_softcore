@@ -68,6 +68,7 @@ module i2cmcu #(
 	    end
 	    else if (instruction == 16'h0002) begin // Halt
 	       instRE <= 1'b0;
+	       pcntr <= pcntr + 1;
 	    end
 	    else if (instruction == 16'h0003) begin // Return
 	       pcntr  <= retPtr;
@@ -75,16 +76,77 @@ module i2cmcu #(
 	    end
 	    else if (instruction == 16'h0004) begin // I2C stop
 	       i2cStop <= 1'b1;
+	       pcntr <= pcntr + 1;
 	    end
-	    else if (instruction[15:12] == 4'h1) begin // Write to internal register
-	       pRegs[instruction[11:10]] <= instruction[:0];
+	    else begin
+	       case(instruction[15:12])
+	        4'h1:  begin // Write to internal register
+	           pRegs[instruction[9:8]] <= instruction[7:0];
+	           pcntr <= pcntr + 1;
+	        end
+    	    4'h2:  begin // Write to output
+    	       outReg[instruction[11:8]] <= instruction[7:0];
+    	       pcntr <= pcntr + 1;
+    	    end
+    	    4'h3:  begin // Copy register to output
+    	       outReg[instructions[5:2]] <= pRegs[1:0];
+    	       pcntr <= pcntr + 1;
+    	    end
+    	    4'h4:  begin // Conditionally skip next instruction;
+    	       case (instruction(11:10))
+          		 2'b00: begin // If register equals value
+          		    if (pRegs[instruction[9:8]] == instruction[7:0]) begin
+          		       pcntr <= pcntr + 2;
+          		    end
+          		    else begin
+          		       pcntr <= pcntr + 1;
+          		    end
+          		 end
+          		 2'b01: begin // If register not equal to value
+          		    if (pRegs[instruction[9:8]] != instruction[7:0]) begin
+          		       pcntr <= pcntr + 2;
+          		    end
+          		    else begin
+          		       pcntr <= pcntr + 1;
+          		    end
+          		 end
+          		 2'b10: begin // If the register and the mask value
+          		    if (pRegs[instruction[9:8]] && instruction[7:0]) begin
+          		       pcntr <= pcntr + 2;
+          		    end
+          		    else begin
+          		       pcntr <= pcntr + 1;
+          		    end
+          		 end
+          		 2'b11: begin // If the register or the mask value
+          		    if (pRegs[instruction[9:8]] || instruction[7:0]) begin
+          		       pcntr <= pcntr + 2;
+          		    end
+          		    else begin
+          		       pcntr <= pcntr + 1;
+          		    end
+          		 end
+    	       endcase // case (instruction(11:10))
+    	    end // if (instruction[15:12] == 4'h4)
+	        4'h5: begin // Jump
+	          retPtr <= pcntr;
+	          pcntr  <= instruction[7:0];
+          end
+          4'h6: begin // Jump if register not and post decrement the register
+            if (pRegs[instruction[9:8]] != 0) begin
+              retPtr <= pcntr;
+              pcntr  <= instruction[7:0];
+              pRegs[instruction[9:8]] <= pRegs[instruction[9:8]] - 1;
+            end
+            else begin
+              pcntr <= pcntr + 1;
+            end
+          end
+          4'h7: begin // I2C start with device address
+
+          end
+        endcase
 	    end
-	    else if (instruction[15:12] == 4'h2) begin // Write to output
-	       outReg[instruction[15:
-	 end
-      end
    end
-   
-   
 
 endmodule
