@@ -3,13 +3,13 @@
 /// @author Daniel Casner <www.danielcasner.org>
 
 module i2cmcu #(
-  parameter NUM_OUTPUT_REG = 1
+  parameter NUM_OUTPUT_REG = 16
   )
   (
     input      clk, ///< processor clock
     inout 	   sda, ///< I2C data
     inout 	   scl, ///< I2C clock
-    output reg [7:0] outReg[0:NUM_OUPUT_REG-1] ///< Output (result) registers
+    output reg [7:0] outReg[0:NUM_OUTPUT_REG-1] ///< Output (result) registers
   );
 
   reg  [7:0] 	   pcntr;       ///< Program counter
