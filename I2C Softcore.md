@@ -17,10 +17,10 @@ The I2C digital sensor softcore operates on 16 bit instructions selected specifi
 | Skip next inst if reg or val    | sior     | register[1:0], value[7:0]    | {0x4, 0b11, reg, val}   |
 | Jump                            | jump     | pointer[7:0]                 | {0x50, pointer}         |
 | Jump if not zero and decriment  | jdec     | register[1:0], pointer[7:0]  | {0x6, 0b00, reg, ptr}   |
-| I2C start            		        | start    | i2c address[10:0]            | {0x7, 0b0, addr}        |
-| I2C repeated start              | rstrt    | None                         | {0x7800}                |
-| I2C write constant   		        | wrc      | value[7:0], ACK              | {0x8, 0b000, val, ack}  |
-| I2C write register   		        | wrr      | register[1:0], ACK           | {0x820, 0b0, reg, ack}  |
+| I2C start            		        | start    | i2c address[9:0], read/write | {0x7, 0b0, addr, R/nW}  |
+| I2C write constant   		        | wrc      | value[7:0]                   | {0x80, val}             |
+| I2C write register   		        | wrr      | register[1:0]                | {0x810, 0b00, reg}      |
 | I2C read to output 		          | outrd    | output[3:0], ACK             | {0x90, 0b000, out, ack} |
-| I2C read to register            | regrd    | register[1:0], ACK           | {0x980, 0b0, reg, ack}  |
+| I2C read to register            | regrd    | register[1:0], ACK           | {0x910, 0b0, reg, ack}  |
+| I2C NAK jump                    | nakj     | pointer[7:0]                 | {0xA0, pointer}         |
 | I2C stop                        | stop     | None                         | {0x0004}                |
