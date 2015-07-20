@@ -16,7 +16,7 @@ The I2C digital sensor softcore operates on 16 bit instructions selected specifi
 | Skip next inst if reg and val   | siand    | register[1:0], value[7:0]    | {0x4, 0b10, reg, val}   |
 | Skip next inst if reg or val    | sior     | register[1:0], value[7:0]    | {0x4, 0b11, reg, val}   |
 | Jump                            | jump     | pointer[7:0]                 | {0x50, pointer}         |
-| Jump if not zero and decriment  | jdec     | register[1:0], pointer[7:0]  | {0x6, 0b00, reg, ptr}   |
+| Jump if not zero and decrement  | jdec     | register[1:0], pointer[7:0]  | {0x6, 0b00, reg, ptr}   |
 | I2C start            		        | start    | i2c address[9:0], read/write | {0x7, 0b0, addr, R/nW}  |
 | I2C write constant   		        | wrc      | value[7:0]                   | {0x80, val}             |
 | I2C write register   		        | wrr      | register[1:0]                | {0x810, 0b00, reg}      |
