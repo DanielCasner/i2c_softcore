@@ -186,13 +186,35 @@ def writeBareHex(program, hexFile):
     fh = open(hexFile, 'w')
     for inst in program:
         fh.write("{:02x} {:02x}\r\n".format(inst >> 8, inst & 0xff))
+    fh.close()
 
 def writeLatticeHex(program, hexFile):
     "Writes out a hex file suitable for inclusion in a lattice program"
-    pass
+    segment = 0
+    word    = 0
+
+    segments = []
+    s = 0
+    for inst in program:
+        if word < 16:
+            ile = ((inst & 0xff) << 8) | (inst >> 8)
+            s |= ile << (16*word)
+            word += 1
+        else:
+            segments.append(s)
+            s    = 0
+            word = 0
+    segments.append(s)
+
+    fh = open(hexFile, 'w')
+    for s in enumerate(segments):
+        fh.write("defparam ram256x16_inst.INIT_{:x} =\r\n256'h{:064x};\r\n".format(*s))
+    fh.close()
+
 
 if __name__ == '__main__':
     asmFile = sys.argv[1]
     basefn, ext = os.path.splitext(asmFile)
-    hexFile = basefn + '.hex'
-    writeBareHex(parseFile(asmFile), hexFile)
+    program = parseFile(asmFile)
+    writeBareHex(program, basefn + '.hex')
+    writeLatticeHex(program, basefn + '.v')
