@@ -145,10 +145,10 @@ module i2cmcu #(
           		 end
           		 2'b10: begin // If the register and the mask value
           		    if (pRegs[instruction[9:8]] && instruction[7:0]) begin
-          		       pcntr <= pcntr + 2;
+          		       pcntr <= pcntr + 1;
           		    end
           		    else begin
-          		       pcntr <= pcntr + 1;
+          		       pcntr <= pcntr + 2;
           		    end
           		 end
           		 2'b11: begin // If the register or the mask value

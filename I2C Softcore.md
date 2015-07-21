@@ -13,7 +13,7 @@ The I2C digital sensor softcore operates on 16 bit instructions selected specifi
 | Copy register to output         | outrg    | output[3:0], register[1:0]   | {0x30, 0b00, out, reg}  |
 | Skip next instruction if equal  | sieq     | register[1:0], value[7:0]    | {0x4, 0b00, reg, val}   |
 | Skip next inst if not equal     | sine     | register[1:0], value[7:0]    | {0x4, 0b01, reg, val}   |
-| Skip next inst if reg and val   | siand    | register[1:0], value[7:0]    | {0x4, 0b10, reg, val}   |
+| Skip next inst if not reg & val | siand    | register[1:0], value[7:0]    | {0x4, 0b10, reg, val}   |
 | Skip next inst if reg or val    | sior     | register[1:0], value[7:0]    | {0x4, 0b11, reg, val}   |
 | Jump                            | jump     | pointer[7:0]                 | {0x50, pointer}         |
 | Jump if not zero and decrement  | jdec     | register[1:0], pointer[7:0]  | {0x6, 0b00, reg, ptr}   |

@@ -121,22 +121,37 @@ module i2c_master #(
             default: timer <= timer + 1;
           endcase
         end // Writing Address out
-        else begin // Write read / not write bit
+        else begin
           timer <= timer + 1;
-          case (timer)
-            0: begin
-              sdaLow <= !readNWrite;
-            end
-            HALF_PERIOD: begin
-              sclLow <= 1'b0;
-            end
-            FULL_PERIOD: begin
-              sclLow <= 1'b1;
-              sdaLow <= 1'b0;
-              state  <= waiting;
-              busy   <= 1'b0;
-            end
-          endcase
+          if (bitCounter == ADDRESS_BITS) begin: // Write read / not write bit
+            case (timer)
+              0: begin
+                sdaLow <= !readNWrite;
+              end
+              HALF_PERIOD: begin
+                sclLow <= 1'b0;
+              end
+              FULL_PERIOD: begin
+                sclLow <= 1'b1;
+                sdaLow <= 1'b0;
+                bitCounter <= bitCounter + 1;
+              end
+            endcase
+          end
+          else begin // Reading Ack
+            case (timer)
+              HALF_PERIOD: begin
+                sclLow  <= 1'b0;
+                recvAck <= !sda;
+              end
+              FULL_PERIOD: begin
+                sclLow <= 1'b1;
+                sdaLow <= 1'b0;
+                state  <= waiting;
+                busy   <= 1'b0;
+              end
+            endcase
+          end
         end
       end // addressing
       stopping: begin
@@ -176,7 +191,7 @@ module i2c_master #(
           case (timer)
             0: begin
               dOutStrobe <= 1'b0;
-              sdaLow <= !sendAck;
+              sdaLow <= sendAck;
             end
             HALF_PERIOD: begin
               sclLow  <= 1'b0;
@@ -218,7 +233,7 @@ module i2c_master #(
             end
             HALF_PERIOD: begin
               sclLow  <= 1'b0;
-              recvAck <= sda;
+              recvAck <= !sda;
             end
             FULL_PERIOD: begin
               sclLow <= 1'b0;
